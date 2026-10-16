@@ -14,6 +14,8 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from custom_components.duolingo.api import DuolingoApiClient
 
 from .const import (
+    CONF_DISTINCT_ID,
+    CONF_PASSWORD,
     CONF_USERNAME,
     DOMAIN,
     PLATFORMS,
@@ -38,11 +40,15 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
+    username = entry.data[CONF_USERNAME]
     _LOGGER.debug("Setting up integration with username: %s", username)
-    _LOGGER.debug("Entry data: %s", entry.data)
 
-    client = DuolingoApiClient(username, hass.config.time_zone)
+    client = DuolingoApiClient(
+        username,
+        entry.data[CONF_PASSWORD],
+        hass.config.time_zone,
+        entry.data[CONF_DISTINCT_ID],
+    )
 
     coordinator = DuolingoDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()

@@ -1,62 +1,68 @@
-"""Duolingo API client."""
+"""Bridge from Home Assistant to the Duolingo Python API."""
 
-import logging
 from datetime import datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import requests
-
-_LOGGER: logging.Logger = logging.getLogger(__package__)
+import duolingo
 
 
 class DuolingoApiClient:
-    """Client for communicating with Duolingo API."""
+    """Read streak and XP for one Duolingo account."""
 
-    def __init__(self, username: str, timezone: str) -> None:
-        """Duolingo API Client."""
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        timezone: str,
+        distinct_id: str,
+    ) -> None:
+        """Store the account credentials used to construct the API client."""
         self._username = username
+        self._password = password
         self._timezone = timezone
+        self._distinct_id = distinct_id
 
     def get_streak_data(self) -> dict[str, Any]:
-        """Get streak data for the configured user."""
-        url = f"https://www.duolingo.com/2017-06-30/users?username={self._username}"
-        headers = {
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/91.0.4472.124 Safari/537.36"
-            )
-        }
-
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-
-        json_data = response.json()
-        users = json_data.get("users", [])
-
-        if not users:
-            msg = f"No user found with username: {self._username}"
-            raise ValueError(msg)
-
-        user_data = users[0]
-        # Use Home Assistant's configured timezone
-        # Duolingo API returns dates in user's timezone
-        tz = ZoneInfo(self._timezone)
-        today = datetime.now(tz).strftime("%Y-%m-%d")
-
-        # Handle case where currentStreak is null (no active streak)
-        current_streak = user_data["streakData"].get("currentStreak")
-        if current_streak:
-            streak_extended_today = today == current_streak.get("endDate", "")
-            site_streak = current_streak.get("length", 0)
-        else:
-            streak_extended_today = False
-            site_streak = 0
+        """Log in and return the sensor payload for this account."""
+        client = duolingo.Duolingo(
+            self._username,
+            self._password,
+            distinct_id=self._distinct_id,
+        )
+        user_info = client.get_user_info()
+        streak_info = client.get_streak_info()
+        streak_payload = client.get_streak_data()
+        current = _current_streak(streak_payload)
+        site_streak = streak_info.get("site_streak")
+        if site_streak is None:
+            site_streak = current.get("length") or 0
 
         return {
-            "username": user_data["username"],
-            "streak_extended_today": streak_extended_today,
-            "site_streak": site_streak,
-            "total_xp": user_data.get("totalXp", 0),
+            "username": user_info.get("username") or self._username,
+            "streak_extended_today": self._extended_today(
+                current.get("lastExtendedDate")
+            ),
+            "site_streak": site_streak or 0,
+            "total_xp": user_info.get("total_xp") or 0,
         }
+
+    def _extended_today(self, last_extended: Any) -> bool:
+        """Return whether the streak was extended on today's Home Assistant date."""
+        if not isinstance(last_extended, str) or len(last_extended) < 10:  # noqa: PLR2004
+            return False
+        today = datetime.now(ZoneInfo(self._timezone)).strftime("%Y-%m-%d")
+        return last_extended[:10] == today
+
+
+def _current_streak(payload: Any) -> dict[str, Any]:
+    """Return the currentStreak object from a streak payload."""
+    if not isinstance(payload, dict):
+        return {}
+    streak_data = payload.get("streakData") or {}
+    if not isinstance(streak_data, dict):
+        return {}
+    current = streak_data.get("currentStreak") or {}
+    if not isinstance(current, dict):
+        return {}
+    return current

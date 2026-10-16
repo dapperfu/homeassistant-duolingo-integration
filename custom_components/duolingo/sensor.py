@@ -38,15 +38,7 @@ async def async_setup_entry(
 class DuolingoStreakSensor(DuolingoEntity, SensorEntity):
     """Implementation of the Duolingo streak sensor."""
 
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return f"{DOMAIN}_{self.coordinator.data.get('username')}_streak"
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-        return f"{DOMAIN}_{self.coordinator.data.get('username')}_streak"
+    _sensor_key = "streak"
 
     @property
     def native_value(self) -> int:
@@ -78,15 +70,7 @@ class DuolingoStreakSensor(DuolingoEntity, SensorEntity):
 class DuolingoXPSensor(DuolingoEntity, SensorEntity):
     """Implementation of the Duolingo XP sensor."""
 
-    @property
-    def name(self) -> str:
-        """Return the name of the sensor."""
-        return f"{DOMAIN}_{self.coordinator.data.get('username')}_xp"
-
-    @property
-    def unique_id(self) -> str:
-        """Return a unique ID to use for this entity."""
-        return f"{DOMAIN}_{self.coordinator.data.get('username')}_xp"
+    _sensor_key = "xp"
 
     @property
     def native_value(self) -> int:

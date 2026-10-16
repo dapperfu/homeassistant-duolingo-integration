@@ -6,3 +6,5 @@ venv
 .idea
 ha-config/
 CLAUDE.md
+flows
+flows(1)

@@ -1,3 +1,4 @@
+duolingo-api @ git+https://github.com/dapperfu/Duolingo.git@30398fa10d9af1c198f5231cc5376cad2589f6c5
 pytest
 pytest-asyncio
 aiohttp

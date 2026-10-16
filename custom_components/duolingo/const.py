@@ -3,7 +3,7 @@
 # Base component constants
 NAME = "Duolingual"
 DOMAIN = "duolingo"
-VERSION = "0.1.0"
+VERSION = "1.1.1"
 
 ISSUE_URL = "https://github.com/TimCinel/duolingual/issues"
 
@@ -14,6 +14,8 @@ PLATFORMS = [BINARY_SENSOR, SENSOR]
 
 # Configuration and options
 CONF_USERNAME = "username"
+CONF_PASSWORD = "password"  # noqa: S105
+CONF_DISTINCT_ID = "distinct_id"
 
 
 STARTUP_MESSAGE = f"""

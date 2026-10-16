@@ -9,7 +9,7 @@ _Home Assistant integration to track your Duolingo daily streak progress._
 ## About
 
 
-This integration is easy to set up (just enter your username) and it creates sensors to monitor your Duolingo streak activity:
+This integration asks for a Duolingo username and password and creates sensors to monitor streak activity. Add it again for each additional account. Entity ids look like `sensor.duolingo_<username>_streak`.
 
 <img width="416" alt="image" src="https://github.com/user-attachments/assets/28036aaa-67e7-419b-980e-5926433aad07" />
 
@@ -49,8 +49,9 @@ Add this repository as a custom repository in HACS:
 
 1. Go to **Settings → Devices & Services → Add Integration**
 2. Search for "Duolingual"
-3. Enter your Duolingo username (the one visible in your profile URL)
-4. The integration will create two entities for tracking your streak
+3. Enter the Duolingo username and password. The password field is masked.
+4. Repeat those steps for each additional account
+5. Each account gets its own entities, for example `sensor.duolingo_<username>_streak`, `sensor.duolingo_<username>_xp`, and `binary_sensor.duolingo_<username>_streak_extended`
 
 ## Contributions are welcome!
 

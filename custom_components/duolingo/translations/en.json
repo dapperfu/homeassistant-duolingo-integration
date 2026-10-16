@@ -3,13 +3,14 @@
         "step": {
             "user": {
                 "data": {
-                    "username": "Username"
+                    "username": "Username",
+                    "password": "Password"
                 },
-                "description": "Please enter your Duolingo username:"
+                "description": "Enter the Duolingo username and password for this account. Add the integration again to track another user."
             }
         },
         "error": {
-            "auth": "Failed to authenticate. Please check your username.",
+            "auth": "Failed to authenticate. Please check your username and password.",
             "invalid_auth": "Invalid authentication",
             "unknown": "Unexpected error"
         },

@@ -33,10 +33,7 @@ async def async_setup_entry(
 class DuolingualBinarySensor(DuolingoEntity, BinarySensorEntity):
     """Implementation of the Duolingual binary sensor."""
 
-    @property
-    def name(self) -> str:
-        """Return the name of the binary_sensor."""
-        return f"{DOMAIN}_{self.coordinator.data.get('username')}"
+    _sensor_key = "streak_extended"
 
     @property
     def is_on(self) -> bool:

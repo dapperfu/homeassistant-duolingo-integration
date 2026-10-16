@@ -11,6 +11,7 @@ lint.select = [
 lint.ignore = [
     "ANN401",  # Dynamically typed expressions (typing.Any) are disallowed
     "COM812",  # May cause conflicts with formatter https://docs.astral.sh/ruff/linter/#error-suppression
+    "CPY001",  # Existing modules do not carry a copyright header
     "D203",    # no-blank-line-before-class (incompatible with formatter)
     "D212",    # multi-line-summary-first-line (incompatible with formatter)
     "D213",    # Multi-line docstring summary should start at the second line
